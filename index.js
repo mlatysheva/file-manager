@@ -5,39 +5,79 @@ import process from 'process';
 import { parseStartArgs } from './src/cli/parseStartArgs.js';
 import { help } from './src/utils/help.js';
 import readline from 'readline';
+import path from 'path';
+import { doesExist } from './src/utils/doesExist.js';
+import { isDirectory } from './src/utils/isDirectory.js';
 
 function fileManager() {
 
-const userName = parseStartArgs();
+  const userName = parseStartArgs();
 
-process.stdout.write(`Welcome to the File Manager, ${userName}!\n`);
-process.stdout.write('Home directory is: ' + os.homedir() + '\n');
-process.stdout.write(`You are currently in: ${process.cwd()} , enter your command:\n`);
-process.stdout.write('Type "help" to see all available commands.\n');
+  let cwd = os.homedir();
+  process.chdir(cwd);
 
-help();
+  process.stdout.write(`Welcome to the File Manager, ${userName}!\n`);
+  process.stdout.write('Type "help" to see all available commands.\n');
+  process.stdout.write(`You are currently in: ${cwd}\nEnter your command:\n`);
+  // const currentFilePath = fileURLToPath(import.meta.url);
+  // console.log( `currentFilePath: ${currentFilePath}`);
+  // process.stdout.write(`Dirname is: ${getDirname(import.meta.url)}\n`);
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
 
-rl.on('line', (line) => {
-  const lineToString = line.toString().trim();
-
-  const commandArray = lineToString.split(" ");
-
-  switch (lineToString) {
-    case ".exit" || "exit": {
-      process.stdout.write(`Thank you for using File Manager, ${userName}!`);
-      process.exit();
-    };
-    case "exit": {
-      process.stdout.write(`Thank you for using File Manager, ${userName}!`);
-      process.exit();
-    };
-  };  
-}).on('close', () => {console.log(`Thank you for using File Manager, ${userName}!`)});
+  rl.on('line', async (line) => {
+    const lineToString = line.toString().trim();
+    const commandArray = lineToString.split(" ");
+    switch (commandArray[0]) {
+      case ".exit": {
+        process.stdout.write(`Thank you for using File Manager, ${userName}!`);
+        process.exit();
+      };
+      case "exit": {
+        process.stdout.write(`Thank you for using File Manager, ${userName}!`);
+        process.exit();
+      };
+      case "help": {
+        help();
+        break;
+      };
+      case "cd": {
+        if (commandArray.length > 1) {
+          cwd = path.join(cwd, commandArray.slice(1).join(' '));
+          const doesExistPath = await doesExist(cwd);
+          if (doesExistPath) {
+            process.chdir(cwd);
+            process.stdout.write(`You are now in: ${cwd}\n`);
+          } else {
+            process.stdout.write(`No such directory ${cwd} exists.\nEnter your command or type "help":\n`);
+          }
+        }
+        break;
+      }
+      case "up": {
+        console.log(`os.homedir(): ${os.homedir()}`);
+        if (cwd === os.homedir()) {
+          process.stdout.write(`You are already in the root directory: ${os.homedir()}\n`);
+        } else {
+          cwd = path.join(cwd, '../');
+          if (cwd === os.homedir()) {
+            process.stdout.write(`You are already in the root directory: ${os.homedir()}\n`);
+          } else {
+            process.chdir(cwd);
+            process.stdout.write(`You are now in: ${cwd}\n`);
+          }
+        }
+        break;
+      }
+      default: {
+        process.stdout.write(`Invalid input, type "help" to see available commands.\n`);
+        break;
+      };
+    };  
+  }).on('close', () => {console.log(`Thank you for using File Manager, ${userName}!`)});
 
 // process.stdin.on("data", (chunk) => {
 //   const chunkToString = chunk.toString().trim();
