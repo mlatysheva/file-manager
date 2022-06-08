@@ -1,0 +1,31 @@
+{
+  "name": "file-manager",
+  "version": "1.0.0",
+  "description": "nodejs-based app to work with files",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "test",
+    "start": "node index.js",
+    "delete": "node src/fs/delete.js",
+    "rename": "node src/fs/rename.js",
+    "args": "node src/parseArgs.js -- --username=your_username",
+    "env": "user_name = Maria node src/env.js",
+    "calcHash": "node src/calcHash.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mlatysheva/file-manager.git"
+  },
+  "keywords": [
+    "file",
+    "manager",
+    "nodejs"
+  ],
+  "author": "Maria Latysheva",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mlatysheva/file-manager/issues"
+  },
+  "homepage": "https://github.com/mlatysheva/file-manager#readme"
+}
