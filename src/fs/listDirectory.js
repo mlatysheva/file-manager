@@ -18,7 +18,7 @@ export const listDirectory = async (pathToDirectory) => {
               return;
             }
             if (stats.isFile()) {
-              const item = {"name": path.basename(file, path.extname(fileName)), "type": 'file', "size": stats.size};
+              const item = {"name": path.basename(file, path.extname(fileName)) + path.extname(fileName), "type": 'file', "size": stats.size};
               console.dir(item);
 
             } else {
@@ -27,14 +27,9 @@ export const listDirectory = async (pathToDirectory) => {
             }
           });        
         });
-        // printCurrentDirectory(pathToDirectory);
-        // console.log('Enter your command:');
       }
     });
   } catch (error) {
     console.error(error);
-  } finally {
-    // printCurrentDirectory(pathToDirectory);
-    // console.log('Enter your command:');
-  }  
+  }
 };

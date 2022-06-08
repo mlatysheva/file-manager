@@ -9,6 +9,7 @@ import path from 'path';
 import { doesExist } from './src/utils/doesExist.js';
 import { listDirectory } from './src/fs/listDirectory.js';
 import { printCurrentDirectory } from './src/utils/cwd.js';
+import { calculateHash } from './src/utils/calcHash.js';
 
 function fileManager() {
 
@@ -49,22 +50,17 @@ function fileManager() {
           if (doesExistPath) {
             printCurrentDirectory(cwd);
           } else {
-            process.stdout.write(`No such directory ${cwd} exists.\nEnter your command or type "help":\n`);
+            process.stdout.write(`No such directory ${cwd} exists.\nEnter next command or type "help":\n`);
           }
         }
         break;
       }
       case "up": {
-        console.log(`os.homedir(): ${os.homedir()}`);
         if (cwd === os.homedir()) {
-          process.stdout.write(`You are already in the root directory: ${os.homedir()}\n`);
+          process.stdout.write(`You are already in the root directory: ${os.homedir()}\nEnter next command or type "help":\n`);
         } else {
-          cwd = path.join(cwd, '../');
-          if (cwd === os.homedir()) {
-            process.stdout.write(`You are already in the root directory: ${os.homedir()}\n`);
-          } else {
-            printCurrentDirectory(cwd);
-          }
+          cwd = path.join(cwd, '..');
+          printCurrentDirectory(cwd);
         }
         break;
       }
@@ -76,7 +72,6 @@ function fileManager() {
       case "os": {
         if (commandArray.length > 1 && commandArray[1].startsWith('--')) {
           const arg = commandArray[1].slice(2);
-          console.log(`arg: ${arg}`);
           switch (arg) {
             case "homedir": {
               process.stdout.write(`${os.homedir()}\n`);
@@ -108,8 +103,15 @@ function fileManager() {
           }
         }
       }
+      case "hash": {
+        if (commandArray.length > 1) {
+          const filePath = path.join(cwd, commandArray.slice(1).join(' '));
+          const hash = await calculateHash(filePath);
+          console.log(`Hash for the file: ${filePath} is: ${hash}`);
+        }
+      }
       default: {
-        process.stdout.write(`Invalid input, type "help" to see available commands.\n`);
+        process.stdout.write(`Enter next command or type "help":\n`);
         break;
       };
     };  
@@ -119,16 +121,12 @@ function fileManager() {
 
 fileManager();
 
-// os.EOL and os.arch() - architecture
 
 function getHomedir() {
   return process.env.HOME || process.env.USERPROFILE;
 }
 
-// сделал ее константой, 
-// завел вторую переменную где храню текущую директорию, ее меняю в командами cd и up
 
-// os.homedir(), os.userInfo().homedir
 
 // у всех отрабатывает event на выход при нажатии ctrl + C ?
 
