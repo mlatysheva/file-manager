@@ -4,8 +4,6 @@ import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { doesExist } from '../utils/doesExist.js';
 import { commandClosingMsg } from '../utils/commandClosingMsg.js';
 
-// implement function that compresses file fileToCompress.txt to archive.gz using zlib and Streams API
-
 export const compress = async (path_to_file, path_to_destination, cwd) => {
   try {
     const absolutePath = getAbsolutePath(path_to_file, cwd);
@@ -22,6 +20,6 @@ export const compress = async (path_to_file, path_to_destination, cwd) => {
       commandClosingMsg(cwd);
     }
   } catch (err) {
-    console.log(`FS operation failed.\n${err}`);
+    console.log(`FS operation failed!\n${err}`);
   }
 };

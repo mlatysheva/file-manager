@@ -9,7 +9,3 @@ export const doesExist = async (path) => {
     return false;    
   }
 }
-
-export const doesExist2 = (path) => {
-  return fs.existsSync(currentPath);
-}

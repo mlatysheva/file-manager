@@ -8,7 +8,7 @@ export const create = async (userPath, cwd) => {
     await fs.writeFile(absolutePath, '');
     console.log(`\nFile ${userPath} was successfully created.`);
   } catch (err) {
-    console.log(`FS operation failed\n${err}`);
+    console.log(`FS operation failed!\n${err}`);
   }
   commandClosingMsg(cwd);
 }
