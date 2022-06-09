@@ -16,9 +16,7 @@ The file manager is able to do the following:
 ## Technical requirements
 
 - To run this application you will need 
-```bash
-    npm
-```
+    `npm`
 - Download the repository and start the application by running the npm-script start in the following way:
 ```bash
 npm run start -- --username=your_username
@@ -110,3 +108,7 @@ List of operations and their syntax:
     ```bash
     decompress path_to_file path_to_destination
     ```
+- Remember to start the app by running: 
+```bash
+npm run start -- --username=your_username
+```
