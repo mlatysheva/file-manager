@@ -7,15 +7,17 @@ import { help } from './src/utils/help.js';
 import readline from 'readline';
 import path from 'path';
 import { doesExist } from './src/utils/doesExist.js';
-import { listDirectory } from './src/fs/listDirectory.js';
+import { list, listDirectory } from './src/fs/listDirectory.js';
 import { printCurrentDirectory } from './src/utils/cwd.js';
 import { calculateHash } from './src/utils/calcHash.js';
+import { getAbsolutePath } from './src/utils/getAbsolutePath.js';
+
+export let cwd = os.homedir();
 
 function fileManager() {
 
   const userName = parseStartArgs();
-
-  let cwd = os.homedir();
+  
   process.chdir(cwd);
 
   process.stdout.write(`Welcome to the File Manager, ${userName}!\n`);
@@ -31,10 +33,7 @@ function fileManager() {
     const lineToString = line.toString().trim();
     const commandArray = lineToString.split(" ");
     switch (commandArray[0]) {
-      case ".exit": {
-        process.stdout.write(`Thank you for using File Manager, ${userName}!`);
-        process.exit();
-      };
+      case ".exit": 
       case "exit": {
         process.stdout.write(`Thank you for using File Manager, ${userName}!`);
         process.exit();
@@ -66,6 +65,7 @@ function fileManager() {
       }
       case "ls": {
         await listDirectory(cwd);
+        // await list(cwd);
         printCurrentDirectory(cwd);
         break;
       }
@@ -102,16 +102,24 @@ function fileManager() {
             };
           }
         }
+        break;
       }
       case "hash": {
         if (commandArray.length > 1) {
-          const filePath = path.join(cwd, commandArray.slice(1).join(' '));
-          const hash = await calculateHash(filePath);
-          console.log(`Hash for the file: ${filePath} is: ${hash}`);
+          const userPath = commandArray.slice(1).join(' ');
+          const absolutePath = getAbsolutePath(userPath, cwd);
+          const doesExistPath = await doesExist(absolutePath);
+          if (doesExistPath) {
+            const hash = await calculateHash(absolutePath);
+            process.stdout.write(`Hash for the file: ${userPath} is: ${hash}\nEnter next command or type "help":\n`);
+          } else {
+            process.stdout.write(`No such file or directory ${userPath} exists.\nEnter next command or type "help":\n`);
+          }
         }
+        break;
       }
       default: {
-        process.stdout.write(`Enter next command or type "help":\n`);
+        process.stdout.write(`Invalid input! Enter next command or type "help":\n`);
         break;
       };
     };  
@@ -120,21 +128,3 @@ function fileManager() {
 };
 
 fileManager();
-
-
-function getHomedir() {
-  return process.env.HOME || process.env.USERPROFILE;
-}
-
-
-
-// у всех отрабатывает event на выход при нажатии ctrl + C ?
-
-// process.on('SIGINT', cb())
-
-// enter your command:${EOL}
-// Подскажите пожалуйста, как SIGINT передать из свича в ридлайн?
-// rl.on('SIGINT', rl.close())
-// rl.on('close', () => ...)
-// дак ловишь .exit и вызываешь rl.close()
-// прям в on(line)

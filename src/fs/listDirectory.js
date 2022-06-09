@@ -1,4 +1,5 @@
 import fs from 'fs';
+// import * as fs from 'fs/promises';
 import path from 'path';
 import { printCurrentDirectory } from '../utils/cwd.js';
 
@@ -8,11 +9,12 @@ export const listDirectory = async (pathToDirectory) => {
 
       if (err) { 
         console.error(err);
-      } else {  
+      } 
+      // else {  
           files.forEach(async (file, index) => {
           let fileName = path.join(pathToDirectory, file);
     
-          fs.stat(fileName, (err, stats) => {
+          await fs.stat(fileName, (err, stats) => {
             if (err) {
               console.error(err)
               return;
@@ -27,8 +29,19 @@ export const listDirectory = async (pathToDirectory) => {
             }
           });        
         });
-      }
+      // }
     });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// import * as fs from 'fs/promises';
+
+export const list = async (pathToDirectory) => {
+  try {
+    const entries = await fs.readdir(pathToDirectory);
+    console.log(entries);
   } catch (error) {
     console.error(error);
   }
