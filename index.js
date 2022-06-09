@@ -17,6 +17,7 @@ import { read } from './src/fs/readFile.js';
 import { create } from './src/fs/createFile.js';
 import { rename } from './src/fs/renameFile.js';
 import { copy } from './src/fs/copyFile.js';
+import { move } from './src/fs/moveFile.js';
 import { commandClosingMsg } from './src/utils/commandClosingMsg.js';
 
 export let cwd = os.homedir();
@@ -64,7 +65,7 @@ function fileManager() {
           }
         }
         break;
-      }
+      };
       case "up": {
         if (cwd === os.homedir()) {
           process.stdout.write(`You are already in the root directory: ${os.homedir()}\nEnter command or type "help":\n`);
@@ -74,13 +75,13 @@ function fileManager() {
           commandClosingMsg(cwd);
         }
         break;
-      }
+      };
       case "ls": {
         await listDirectory(cwd);
         // await list(cwd);
         commandClosingMsg(cwd);
         break;
-      }
+      };
       case "cat": {
         if (args.length > 0) {
           const userPath = args.join(' ');
@@ -96,9 +97,9 @@ function fileManager() {
         } else {
           process.stdout.write(`You need to specify the path to the file after "cat".\n`);
           commandClosingMsg(cwd);
-        }
+        };
         break;
-      }
+      };
       case "add": {
         if (args.length > 0) {
           const userPath = args.join(' ');
@@ -109,7 +110,7 @@ function fileManager() {
         } else {
           process.stdout.write(`You need to specify the path to the file after "add".\n`);
           commandClosingMsg(cwd);
-        }
+        };
         break;
       };
       case "rn": {
@@ -120,7 +121,8 @@ function fileManager() {
         } else {
           process.stdout.write(`You need to specify current file name and new file name after "rn".\n`);
           commandClosingMsg(cwd);
-        }
+        };
+        break;
       };
       case "cp": {
         if (args.length > 1) {
@@ -130,8 +132,20 @@ function fileManager() {
         } else {
           process.stdout.write(`You need to specify current file path and new file path after "cp".\n`);
           commandClosingMsg(cwd);
-        }
-      }
+        };
+        break;
+      };
+      case "mv": {
+        if (args.length > 1) {
+          const fileToMove = args.slice(0, -1).join(' ');
+          const newDestination = args[args.length - 1];
+          await move(fileToMove, newDestination, cwd);
+        } else {
+          process.stdout.write(`You need to specify the file to move and new destination path after "mv".\n`);
+          commandClosingMsg(cwd);
+        };
+        break;
+      };
       case "os": {
         if (args.length > 0 && args[0].startsWith('--')) {
           const arg = args[0].slice(2);
