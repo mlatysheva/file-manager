@@ -1,14 +1,14 @@
-import * as fs from 'fs';
+import * as fs from 'fs/promises';
+import { getAbsolutePath } from '../utils/getAbsolutePath.js';
+import { commandClosingMsg } from '../utils/commandClosingMsg.js';
 
-export function create(filePath) {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(filePath, '', (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-        console.log(`\nFile ${filePath} was successfully created.`);
-      }
-    });
-  });
+export const create = async (userPath, cwd) => {
+  const absolutePath = getAbsolutePath(userPath, cwd);
+  try {
+    await fs.writeFile(absolutePath, '');
+    console.log(`\nFile ${userPath} was successfully created.`);
+  } catch (err) {
+    console.log(`FS operation failed\n${err}`);
+  }
+  commandClosingMsg(cwd);
 }

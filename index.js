@@ -1,6 +1,5 @@
 #! /usr/bin/env node
 
-import * as fs from 'fs/promises';
 import os from 'os';
 import process from 'process';
 import { parseStartArgs } from './src/cli/parseStartArgs.js';
@@ -10,7 +9,6 @@ import path from 'path';
 import { doesExist } from './src/utils/doesExist.js';
 import { list, listDirectory } from './src/fs/listDirectory.js';
 import { calculateHash } from './src/utils/calcHash.js';
-import { getAbsolutePath } from './src/utils/getAbsolutePath.js';
 import { compress } from './src/zip/compress.js';
 import { decompress } from './src/zip/decompress.js';
 import { read } from './src/fs/readFile.js';
@@ -21,9 +19,9 @@ import { move } from './src/fs/moveFile.js';
 import { remove } from './src/fs/deleteFile.js';
 import { commandClosingMsg } from './src/utils/commandClosingMsg.js';
 
-export let cwd = os.homedir();
-
 function fileManager() {
+
+  let cwd = os.homedir();
 
   const userName = parseStartArgs();
   
@@ -57,19 +55,21 @@ function fileManager() {
           cwd = path.join(cwd, args.join(' '));
           const doesExistPath = await doesExist(cwd);
           if (doesExistPath) {
-            // printCurrentDirectory(cwd);
             process.chdir(cwd);
             commandClosingMsg(cwd);
           } else {
             process.stdout.write(`No such directory ${cwd} exists.\n`);
             commandClosingMsg(cwd);
           }
+        } else {
+          process.stdout.write(`Specify a valid directory after "cd".\n`);
+          commandClosingMsg(cwd);
         }
         break;
       };
       case "up": {
         if (cwd === os.homedir()) {
-          process.stdout.write(`You are already in the root directory: ${os.homedir()}\nEnter command or type "help":\n`);
+          process.stdout.write(`You are already in your root directory: ${os.homedir()}\nEnter command or type "help":\n`);
         } else {
           cwd = path.join(cwd, '..');
           process.chdir(cwd);
@@ -85,18 +85,10 @@ function fileManager() {
       };
       case "cat": {
         if (args.length > 0) {
-          const userPath = args.join(' ');
-          const absolutePath = getAbsolutePath(userPath, cwd);
-          const doesExistPath = await doesExist(absolutePath);
-          if (doesExistPath) {
-            await read(absolutePath);
-            commandClosingMsg(cwd);
-          } else {
-            process.stdout.write(`No such file or directory ${args.join(' ')}\n`);
-            commandClosingMsg(cwd);
-          }
+          const userPath = args.join(' '); 
+          await read(userPath, cwd);
         } else {
-          process.stdout.write(`You need to specify the path to the file after "cat".\n`);
+          process.stdout.write(`Specify a valid path after "cat".\n`);
           commandClosingMsg(cwd);
         };
         break;
@@ -104,12 +96,9 @@ function fileManager() {
       case "add": {
         if (args.length > 0) {
           const userPath = args.join(' ');
-          const absolutePath = getAbsolutePath(userPath, cwd);
-          await create(absolutePath);
-          // process.stdout.write(`You are currently in: ${cwd}\nEnter next command or type "help":\n`);
-          commandClosingMsg(cwd);
+          await create(userPath, cwd);
         } else {
-          process.stdout.write(`You need to specify the path to the file after "add".\n`);
+          process.stdout.write(`Specify a valid path to the file after "add".\n`);
           commandClosingMsg(cwd);
         };
         break;
@@ -120,7 +109,7 @@ function fileManager() {
           const newName = args[args.length - 1];
           await rename(fileToRename, newName, cwd);
         } else {
-          process.stdout.write(`You need to specify current file name and new file name after "rn".\n`);
+          process.stdout.write(`Specify valid current file name and new file name after "rn".\n`);
           commandClosingMsg(cwd);
         };
         break;
@@ -131,7 +120,7 @@ function fileManager() {
           const newDestination = args[args.length - 1];
           await copy(fileToCopy, newDestination, cwd);
         } else {
-          process.stdout.write(`You need to specify current file path and new file path after "cp".\n`);
+          process.stdout.write(`Specify valid current file path and a new file path after "cp".\n`);
           commandClosingMsg(cwd);
         };
         break;
@@ -142,7 +131,7 @@ function fileManager() {
           const newDestination = args[args.length - 1];
           await move(fileToMove, newDestination, cwd);
         } else {
-          process.stdout.write(`You need to specify the file to move and new destination path after "mv".\n`);
+          process.stdout.write(`Specify a valid path for the file to move and new destination path after "mv".\n`);
           commandClosingMsg(cwd);
         };
         break;
@@ -152,7 +141,7 @@ function fileManager() {
           const fileToDelete = args.join(' ');
           await remove(fileToDelete, cwd);
         } else {
-          process.stdout.write(`You need to specify the file to delete "rm".\n`);
+          process.stdout.write(`Specify a valid path for the file to delete after "rm".\n`);
           commandClosingMsg(cwd);
         };
         break;
@@ -190,71 +179,51 @@ function fileManager() {
               break;
             };
             default: {
-              process.stdout.write(`No such command ${arg}\n`);
+              process.stdout.write(`No such command ${arg}. Type "help" to see available commands.\n`);
               commandClosingMsg(cwd);
               break;
             };
           }
+        } else {
+          process.stdout.write(`Specify a valid command after "os". Type "help" to see available commands.\n`);
+          commandClosingMsg(cwd);
         }
         break;
       }
       case "hash": {
         if (args.length > 0) {
           const userPath = args.join(' ');
-          const absolutePath = getAbsolutePath(userPath, cwd);
-          const doesExistPath = await doesExist(absolutePath);
-          if (doesExistPath) {
-            const hash = await calculateHash(absolutePath);
-            process.stdout.write(`Hash for the file: ${userPath} is: ${hash}\n`);
-            commandClosingMsg(cwd);
-          } else {
-            process.stdout.write(`No such file or directory ${userPath} exists.\n`);
-            commandClosingMsg(cwd);
-          }
+          await calculateHash(userPath, cwd);
+        } else {
+          process.stdout.write(`Specify a valid path for the file.\n`);
+          commandClosingMsg(cwd);
         }
         break;
       }
       case "compress": {
-        if (args.length > 0) {
-          const userPath = args.join(' ');
-          const absolutePath = getAbsolutePath(userPath, cwd);
-          const doesExistPath = await doesExist(absolutePath);
-          if (doesExistPath) {
-            await compress(absolutePath, `${absolutePath}.gz`);
-            commandClosingMsg(cwd);
-          } else {
-            process.stdout.write(`No such file or directory ${userPath} exists.\n`);
-            commandClosingMsg(cwd);
-          }
+        if (args.length > 1) {
+          const fileToCompress = args.slice(0, -1).join(' ');
+          const compressedFileName = args[args.length - 1];
+          await compress(fileToCompress, compressedFileName, cwd);
         } else {
-          process.stdout.write(`Invalid path names for original and compressed files!\n`);
+          process.stdout.write(`Specify valid paths for the original and compressed files!\n`);
           commandClosingMsg(cwd);
         }
         break;
       }
       case "decompress": {
-        if (args.length > 0) {
-          const userPath = args.join(' ');
-          const compressededPath = args[0];
-          const decompressedFilePath = args[1];
-          const compressedAbsolutePath = getAbsolutePath(compressededPath, cwd);
-          const decompressedAbsolutePath = getAbsolutePath(decompressedFilePath, cwd);
-          const doesExistPath = await doesExist(compressedAbsolutePath);
-          if (doesExistPath) {
-            await decompress(compressedAbsolutePath, decompressedAbsolutePath);
-            commandClosingMsg(cwd);
-          } else {
-            process.stdout.write(`No such file or directory ${userPath} exists.\n`);
-            commandClosingMsg(cwd);
-          }
+        if (args.length > 1) {
+          const fileToDecompress = args.slice(0, -1).join(' ');
+          const decompressedFileName = args[args.length - 1];
+          await decompress(fileToDecompress, decompressedFileName, cwd);
         } else {
-          process.stdout.write(`Invalid path names for original and compressed files!\n`);
+          process.stdout.write(`Specify valid paths for the compressed and decompressed files!\r\n`);
           commandClosingMsg(cwd);
         }
         break;
       }
       default: {
-        process.stdout.write(`Invalid command! Check the spelling!\n`);
+        process.stdout.write(`Invalid input! Type "help" to see available commands.\n`);
         commandClosingMsg(cwd);
         break;
       };
