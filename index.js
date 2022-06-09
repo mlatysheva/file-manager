@@ -18,6 +18,7 @@ import { create } from './src/fs/createFile.js';
 import { rename } from './src/fs/renameFile.js';
 import { copy } from './src/fs/copyFile.js';
 import { move } from './src/fs/moveFile.js';
+import { remove } from './src/fs/deleteFile.js';
 import { commandClosingMsg } from './src/utils/commandClosingMsg.js';
 
 export let cwd = os.homedir();
@@ -142,6 +143,16 @@ function fileManager() {
           await move(fileToMove, newDestination, cwd);
         } else {
           process.stdout.write(`You need to specify the file to move and new destination path after "mv".\n`);
+          commandClosingMsg(cwd);
+        };
+        break;
+      };
+      case "rm": {
+        if (args.length > 0) {
+          const fileToDelete = args.join(' ');
+          await remove(fileToDelete, cwd);
+        } else {
+          process.stdout.write(`You need to specify the file to delete "rm".\n`);
           commandClosingMsg(cwd);
         };
         break;
