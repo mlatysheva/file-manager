@@ -32,7 +32,8 @@ function fileManager() {
   rl.on('line', async (line) => {
     const lineToString = line.toString().trim();
     const commandArray = lineToString.split(" ");
-    switch (commandArray[0]) {
+    const [command, ...args] = lineToString.split(" ");
+    switch (command) {
       case ".exit": 
       case "exit": {
         process.stdout.write(`Thank you for using File Manager, ${userName}!`);
@@ -40,11 +41,12 @@ function fileManager() {
       };
       case "help": {
         help();
+        process.stdout.write(`Enter next command or type "help":\n`);
         break;
       };
       case "cd": {
-        if (commandArray.length > 1) {
-          cwd = path.join(cwd, commandArray.slice(1).join(' '));
+        if (args.length > 0) {
+          cwd = path.join(cwd, args.join(' '));
           const doesExistPath = await doesExist(cwd);
           if (doesExistPath) {
             printCurrentDirectory(cwd);
@@ -70,8 +72,8 @@ function fileManager() {
         break;
       }
       case "os": {
-        if (commandArray.length > 1 && commandArray[1].startsWith('--')) {
-          const arg = commandArray[1].slice(2);
+        if (args.length > 0 && args[0].startsWith('--')) {
+          const arg = args[0].slice(2);
           switch (arg) {
             case "homedir": {
               process.stdout.write(`${os.homedir()}\n`);
@@ -105,8 +107,8 @@ function fileManager() {
         break;
       }
       case "hash": {
-        if (commandArray.length > 1) {
-          const userPath = commandArray.slice(1).join(' ');
+        if (args.length > 0) {
+          const userPath = args.join(' ');
           const absolutePath = getAbsolutePath(userPath, cwd);
           const doesExistPath = await doesExist(absolutePath);
           if (doesExistPath) {
