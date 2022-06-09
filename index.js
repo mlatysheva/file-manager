@@ -11,6 +11,8 @@ import { list, listDirectory } from './src/fs/listDirectory.js';
 import { printCurrentDirectory } from './src/utils/cwd.js';
 import { calculateHash } from './src/utils/calcHash.js';
 import { getAbsolutePath } from './src/utils/getAbsolutePath.js';
+import { compress } from './src/zip/compress.js';
+import { decompress } from './src/zip/decompress.js';
 
 export let cwd = os.homedir();
 
@@ -31,7 +33,6 @@ function fileManager() {
 
   rl.on('line', async (line) => {
     const lineToString = line.toString().trim();
-    const commandArray = lineToString.split(" ");
     const [command, ...args] = lineToString.split(" ");
     switch (command) {
       case ".exit": 
@@ -117,6 +118,39 @@ function fileManager() {
           } else {
             process.stdout.write(`No such file or directory ${userPath} exists.\nEnter next command or type "help":\n`);
           }
+        }
+        break;
+      }
+      case "compress": {
+        if (args.length > 0) {
+          const userPath = args.join(' ');
+          const absolutePath = getAbsolutePath(userPath, cwd);
+          const doesExistPath = await doesExist(absolutePath);
+          if (doesExistPath) {
+            await compress(absolutePath, `${absolutePath}.gz`);
+          } else {
+            process.stdout.write(`No such file or directory ${userPath} exists.\nEnter next command or type "help":\n`);
+          }
+        } else {
+          process.stdout.write(`Invalid arguments! Specify paths for original and compressed files or enter next command:\n`);
+        }
+        break;
+      }
+      case "decompress": {
+        if (args.length > 0) {
+          const userPath = args.join(' ');
+          const compressededPath = args[0];
+          const decompressedFilePath = args[1];
+          const compressedAbsolutePath = getAbsolutePath(compressededPath, cwd);
+          const decompressedAbsolutePath = getAbsolutePath(decompressedFilePath, cwd);
+          const doesExistPath = await doesExist(compressedAbsolutePath);
+          if (doesExistPath) {
+            await decompress(compressedAbsolutePath, decompressedAbsolutePath);
+          } else {
+            process.stdout.write(`No such file or directory ${userPath} exists.\nEnter next command or type "help":\n`);
+          }
+        } else {
+          process.stdout.write(`Invalid arguments! Specify paths for original and compressed files or enter next command:\n`);
         }
         break;
       }
