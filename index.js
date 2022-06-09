@@ -1,5 +1,6 @@
 #! /usr/bin/env node
 
+import * as fs from 'fs/promises';
 import os from 'os';
 import process from 'process';
 import { parseStartArgs } from './src/cli/parseStartArgs.js';
@@ -14,6 +15,7 @@ import { compress } from './src/zip/compress.js';
 import { decompress } from './src/zip/decompress.js';
 import { read } from './src/fs/readFile.js';
 import { create } from './src/fs/createFile.js';
+import { rename } from './src/fs/renameFile.js';
 import { commandClosingMsg } from './src/utils/commandClosingMsg.js';
 
 export let cwd = os.homedir();
@@ -69,14 +71,12 @@ function fileManager() {
           cwd = path.join(cwd, '..');
           process.chdir(cwd);
           commandClosingMsg(cwd);
-          // printCurrentDirectory(cwd);
         }
         break;
       }
       case "ls": {
         await listDirectory(cwd);
         // await list(cwd);
-        // printCurrentDirectory(cwd);
         commandClosingMsg(cwd);
         break;
       }
@@ -87,7 +87,6 @@ function fileManager() {
           const doesExistPath = await doesExist(absolutePath);
           if (doesExistPath) {
             await read(absolutePath);
-            // process.stdout.write(`You are currently in: ${cwd}\nEnter next command or type "help":\n`);
             commandClosingMsg(cwd);
           } else {
             process.stdout.write(`No such file or directory ${args.join(' ')}\n`);
@@ -97,6 +96,7 @@ function fileManager() {
           process.stdout.write(`You need to specify the path to the file after "cat".\n`);
           commandClosingMsg(cwd);
         }
+        break;
       }
       case "add": {
         if (args.length > 0) {
@@ -109,7 +109,27 @@ function fileManager() {
           process.stdout.write(`You need to specify the path to the file after "add".\n`);
           commandClosingMsg(cwd);
         }
-      }
+        break;
+      };
+      case "rn": {
+        if (args.length > 1) {
+          const fileToRename = args.slice(0, -1).join(' ');
+          const newName = args[args.length - 1];
+          await rename(fileToRename, newName, cwd);
+          // const absolutePath = getAbsolutePath(fileToRename, cwd);
+          // const doesExistPath = await doesExist(absolutePath);
+          // if (doesExistPath) {
+          //   await fs.rename(absolutePath, getAbsolutePath(newName, cwd));
+          //   commandClosingMsg(cwd);
+          // } else {
+          //   process.stdout.write(`No such file ${args.join(' ')} exists!\n`);
+          //   commandClosingMsg(cwd);
+          // }
+        } else {
+          process.stdout.write(`You need to specify current file name and new file name after "rn".\n`);
+          commandClosingMsg(cwd);
+        }
+      };
       case "os": {
         if (args.length > 0 && args[0].startsWith('--')) {
           const arg = args[0].slice(2);

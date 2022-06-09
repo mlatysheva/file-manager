@@ -11,7 +11,7 @@ export const compress = async (path_to_file, path_to_destination) => {
     const archive = createGzip();
     const writableStream = fs.createWriteStream(path_to_destination);
     fileToCompress.pipe(archive).pipe(writableStream);
-    process.stdout.write(`File ${path_to_file} was successfully compressed.\n`);
+    process.stdout.write(`\nFile ${path_to_file} was successfully compressed.\n`);
   } catch (err) {
     console.log(err);
   }
