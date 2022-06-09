@@ -8,12 +8,12 @@ import readline from 'readline';
 import path from 'path';
 import { doesExist } from './src/utils/doesExist.js';
 import { list, listDirectory } from './src/fs/listDirectory.js';
-import { printCurrentDirectory } from './src/utils/cwd.js';
 import { calculateHash } from './src/utils/calcHash.js';
 import { getAbsolutePath } from './src/utils/getAbsolutePath.js';
 import { compress } from './src/zip/compress.js';
 import { decompress } from './src/zip/decompress.js';
 import { read } from './src/fs/readFile.js';
+import { create } from './src/fs/createFile.js';
 import { commandClosingMsg } from './src/utils/commandClosingMsg.js';
 
 export let cwd = os.homedir();
@@ -93,6 +93,21 @@ function fileManager() {
             process.stdout.write(`No such file or directory ${args.join(' ')}\n`);
             commandClosingMsg(cwd);
           }
+        } else {
+          process.stdout.write(`You need to specify the path to the file after "cat".\n`);
+          commandClosingMsg(cwd);
+        }
+      }
+      case "add": {
+        if (args.length > 0) {
+          const userPath = args.join(' ');
+          const absolutePath = getAbsolutePath(userPath, cwd);
+          await create(absolutePath);
+          // process.stdout.write(`You are currently in: ${cwd}\nEnter next command or type "help":\n`);
+          commandClosingMsg(cwd);
+        } else {
+          process.stdout.write(`You need to specify the path to the file after "add".\n`);
+          commandClosingMsg(cwd);
         }
       }
       case "os": {
