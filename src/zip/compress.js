@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { createGzip } from 'zlib';
+import zlib from 'zlib';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { doesExist } from '../utils/doesExist.js';
 import { commandClosingMsg } from '../utils/commandClosingMsg.js';
@@ -8,11 +8,16 @@ export const compress = async (path_to_file, path_to_destination, cwd) => {
   try {
     const absolutePath = getAbsolutePath(path_to_file, cwd);
     const doesExistPath = await doesExist(absolutePath);
+    if (path_to_destination.slice(-3) !== '.br') {
+      path_to_destination += '.br';
+    }
     if (doesExistPath) {   
       const fileToCompress = fs.createReadStream(absolutePath);
-      const archive = createGzip();
       const writableStream = fs.createWriteStream(getAbsolutePath(path_to_destination, cwd));
-      fileToCompress.pipe(archive).pipe(writableStream);
+      const brotli = zlib.createBrotliCompress();
+
+      fileToCompress.pipe(brotli).pipe(writableStream);
+
       process.stdout.write(`\nFile ${path_to_file} was successfully compressed.\n`);
       commandClosingMsg(cwd);
     } else {
