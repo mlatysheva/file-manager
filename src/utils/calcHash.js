@@ -1,4 +1,5 @@
 import { createReadStream } from 'fs';
+import { EOL } from 'os';
 import { createHash } from 'crypto';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { doesExist } from '../utils/doesExist.js';
@@ -15,16 +16,16 @@ export const calculateHash = async (filePath, cwd) => {
         hash = createHash('sha256').update(data).digest('hex');        
       });
       stream.on('end', () => {
-        process.stdout.write(`Hash for the file: ${filePath} is: ${hash}\n`);
+        process.stdout.write(`${EOL}Hash for the file: ${filePath} is: ${hash}${EOL}`);
         commandClosingMsg(cwd);
         return hash;
       });
     } else {
-      process.stdout.write(`No such file ${filePath} exists.\n`);
+      process.stdout.write(`${EOL}No such file ${filePath} exists.${EOL}`);
       commandClosingMsg(cwd);
     }
   } catch (error) {
-    console.log(`FS operation failed!\n${error}`);
+    console.log(`${EOL}Operation failed!${EOL}${error}`);
     commandClosingMsg(cwd);
   }
 };

@@ -1,4 +1,5 @@
 import { rm, createReadStream, createWriteStream } from 'fs';
+import { EOL } from 'os';
 import { doesExist } from '../utils/doesExist.js';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { commandClosingMsg } from '../utils/commandClosingMsg.js';
@@ -19,17 +20,18 @@ export const move = async (fileToMove, newDestination, cwd) => {
       readable.pipe(writable);
       rm(absolutePath, (error) => {
         if (error) {
-          console.error(`\r\nOperation failed!\n${error}`);
+          console.error(`${EOL}Operation failed!\n${error}${EOL}`);
         }
       });
-      process.stdout.write(`\r\nFile ${fileToMove} was successfully moved to ${newDestination}\r\n`);
-      commandClosingMsg(path.cwd());
+      process.stdout.write(`${EOL}File ${fileToMove} was successfully moved to ${newDestination}${EOL}`);
+      commandClosingMsg(cwd);
     } else {
-      process.stdout.write(`\r\nEnter valid paths for ${fileToMove} and ${newDestination}!\r\n`);
-      commandClosingMsg(path.cwd());
+      process.stdout.write(`${EOL}Enter valid paths for ${fileToMove} and ${newDestination}!${EOL}`);
+      commandClosingMsg(cwd);
     }
   } catch (err) {
     console.error(`FS operation failed! ${err}`);
+    commandClosingMsg(cwd);
   }
 };
 

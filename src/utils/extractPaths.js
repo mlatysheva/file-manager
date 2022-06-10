@@ -17,8 +17,3 @@ export function extractPaths(pathString) {
   extractedPaths.push(firstPath, secondPath);
   return extractedPaths;
 }
-
-extractPaths('Documents/банкротство ТСД.pdf Documents/Translating Law.txt');
-extractPaths('Documents/банкротство ТСД Documents/Translating Law');
-extractPaths('Documents/банкротство ТСД.pdf Documents/Translating Law');
-extractPaths('Documents/банкротство ТСД Documents/Translating Law.txt');

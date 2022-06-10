@@ -1,4 +1,5 @@
 import { createReadStream, createWriteStream } from 'fs';
+import { EOL } from 'os';
 import { doesExist } from '../utils/doesExist.js';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { commandClosingMsg } from '../utils/commandClosingMsg.js';
@@ -17,13 +18,14 @@ export const copy = async (fileToCopy, newDestination, cwd) => {
       const readable = createReadStream(absolutePath);
       const writable = createWriteStream(newAbsolutePath);
       readable.pipe(writable);
-      process.stdout.write(`\r\nFile ${fileToCopy} was successfully copied to ${newDestination}\r\n`);
-      commandClosingMsg(path.cwd());
+      process.stdout.write(`${EOL}File ${fileToCopy} was successfully copied to ${newDestination}${EOL}`);
+      commandClosingMsg(cwd);
     } else {
-      process.stdout.write(`\r\nSpecify valid paths for the file to copy and new destination!\r\n`);
-      commandClosingMsg(path.cwd());
+      process.stdout.write(`${EOL}Specify valid paths for the file to copy and new destination!${EOL}`);
+      commandClosingMsg(cwd);
     }
   } catch (err) {
     console.error(`FS operation failed! ${err}`);
+    commandClosingMsg(cwd);
   }
 };
