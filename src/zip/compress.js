@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { createReadStream, createWriteStream } from 'fs';
 import zlib from 'zlib';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { doesExist } from '../utils/doesExist.js';
@@ -12,8 +12,8 @@ export const compress = async (path_to_file, path_to_destination, cwd) => {
       path_to_destination += '.br';
     }
     if (doesExistPath) {   
-      const fileToCompress = fs.createReadStream(absolutePath);
-      const writableStream = fs.createWriteStream(getAbsolutePath(path_to_destination, cwd));
+      const fileToCompress = createReadStream(absolutePath);
+      const writableStream = createWriteStream(getAbsolutePath(path_to_destination, cwd));
       const brotli = zlib.createBrotliCompress();
 
       fileToCompress.pipe(brotli).pipe(writableStream);

@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import { createReadStream, createWriteStream } from 'fs';
 import zlib from 'zlib';
 import { commandClosingMsg } from '../utils/commandClosingMsg.js';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
@@ -13,8 +13,8 @@ export const decompress = async (path_to_file, path_to_destination, cwd) => {
       const absolutePath = getAbsolutePath(path_to_file, cwd);
       const doesExistPath = await doesExist(absolutePath);
       if (doesExistPath) {
-        const fileToDecompress = fs.createReadStream(absolutePath);
-        const writableStream = fs.createWriteStream(getAbsolutePath(path_to_destination, cwd));
+        const fileToDecompress = createReadStream(absolutePath);
+        const writableStream = createWriteStream(getAbsolutePath(path_to_destination, cwd));
         const brotli = zlib.createBrotliDecompress();
 
         fileToDecompress.pipe(brotli).pipe(writableStream);
