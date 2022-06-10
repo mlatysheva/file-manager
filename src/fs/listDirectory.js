@@ -1,5 +1,5 @@
-import fs from 'fs';
-// import * as fs from 'fs/promises';
+// import fs from 'fs';
+import * as fs from 'fs/promises';
 import path from 'path';
 import { commandClosingMsg } from '../utils/commandClosingMsg.js';
 import { doesExist } from '../utils/doesExist.js';
@@ -39,7 +39,6 @@ export const listDirectory = async (pathToDirectory) => {
   }
 };
 
-// import * as fs from 'fs/promises';
 
 export const list = async (pathToDirectory) => {
   try {

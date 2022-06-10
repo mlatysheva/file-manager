@@ -11,9 +11,12 @@ export const read = async (filePath, cwd) => {
       const readableStream = createReadStream(absolutePath, 'utf8');
 
       readableStream.on('data', (chunk) => {
-          process.stdout.write(chunk);
+        process.stdout.write(chunk);
       })
-      commandClosingMsg(cwd);
+      readableStream.on('end', () => {
+        process.stdout.write('\n');
+        commandClosingMsg(cwd);
+      });
     } catch (error) {
       console.log(`\r\nOperation failed!\n${error}`);
       commandClosingMsg(cwd);

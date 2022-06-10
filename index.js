@@ -27,9 +27,9 @@ function fileManager() {
   
   process.chdir(cwd);
 
-  process.stdout.write(`Welcome to the File Manager, ${userName}!\n`);
-  process.stdout.write(`You are currently in: ${cwd}\n`);
-  process.stdout.write('Type "help" to see all available commands.\n');
+  process.stdout.write(`${os.EOL}Welcome to the File Manager, ${userName}!${os.EOL}`);
+  process.stdout.write(`${os.EOL}You are currently in: ${cwd}${os.EOL}`);
+  process.stdout.write(`${os.EOL}Type "help" to see all available commands.${os.EOL}`);
 
   const rl = readline.createInterface({
     input: process.stdin,
@@ -42,7 +42,7 @@ function fileManager() {
     switch (command) {
       case ".exit": 
       case "exit": {
-        process.stdout.write(`Thank you for using File Manager, ${userName}!`);
+        process.stdout.write(`${os.EOL}Thank you for using File Manager, ${userName}!${os.EOL}`);
         process.exit();
       };
       case "help": {
@@ -58,18 +58,18 @@ function fileManager() {
             process.chdir(cwd);
             commandClosingMsg(cwd);
           } else {
-            process.stdout.write(`No such directory ${cwd} exists.\n`);
+            process.stdout.write(`${os.EOL}No such directory ${cwd} exists.${os.EOL}`);
             commandClosingMsg(cwd);
           }
         } else {
-          process.stdout.write(`Specify a valid directory after "cd".\n`);
+          process.stdout.write(`${os.EOL}Specify a valid directory after "cd".${os.EOL}`);
           commandClosingMsg(cwd);
         }
         break;
       };
       case "up": {
         if (cwd === os.homedir()) {
-          process.stdout.write(`You are already in your root directory: ${os.homedir()}\nEnter command or type "help":\n`);
+          process.stdout.write(`${os.EOL}You are already in your root directory: ${os.homedir()}${os.EOL}Enter command or type "help":${os.EOL}`);
         } else {
           cwd = path.join(cwd, '..');
           process.chdir(cwd);
@@ -78,9 +78,8 @@ function fileManager() {
         break;
       };
       case "ls": {
-        await listDirectory(cwd);
-        // await list(cwd);
-        commandClosingMsg(cwd);
+        // await listDirectory(cwd);
+        await list(cwd);
         break;
       };
       case "cat": {
@@ -88,7 +87,7 @@ function fileManager() {
           const userPath = args.join(' '); 
           await read(userPath, cwd);
         } else {
-          process.stdout.write(`Specify a valid path after "cat".\n`);
+          process.stdout.write(`${os.EOL}Specify a valid path after "cat".${os.EOL}`);
           commandClosingMsg(cwd);
         };
         break;
@@ -98,7 +97,7 @@ function fileManager() {
           const userPath = args.join(' ');
           await create(userPath, cwd);
         } else {
-          process.stdout.write(`Specify a valid path to the file after "add".\n`);
+          process.stdout.write(`${os.EOL}Specify a valid path to the file after "add".${os.EOL}`);
           commandClosingMsg(cwd);
         };
         break;
@@ -109,7 +108,7 @@ function fileManager() {
           const newName = args[args.length - 1];
           await rename(fileToRename, newName, cwd);
         } else {
-          process.stdout.write(`Specify valid current file name and new file name after "rn".\n`);
+          process.stdout.write(`${os.EOL}Specify valid current file name and new file name after "rn".${os.EOL}`);
           commandClosingMsg(cwd);
         };
         break;
@@ -118,9 +117,11 @@ function fileManager() {
         if (args.length > 1) {
           const fileToCopy = args.slice(0, -1).join(' ');
           const newDestination = args[args.length - 1];
+          console.log(`fileToCopy: ${fileToCopy}`);
+          console.log(`newDestination: ${newDestination}`);
           await copy(fileToCopy, newDestination, cwd);
         } else {
-          process.stdout.write(`Specify valid current file path and a new file path after "cp".\n`);
+          process.stdout.write(`${os.EOL}Specify valid current file path and a new file path after "cp".${os.EOL}`);
           commandClosingMsg(cwd);
         };
         break;
@@ -131,7 +132,7 @@ function fileManager() {
           const newDestination = args[args.length - 1];
           await move(fileToMove, newDestination, cwd);
         } else {
-          process.stdout.write(`Specify a valid path for the file to move and new destination path after "mv".\n`);
+          process.stdout.write(`${os.EOL}Specify a valid path for the file to move and new destination path after "mv".${os.EOL}`);
           commandClosingMsg(cwd);
         };
         break;
@@ -141,7 +142,7 @@ function fileManager() {
           const fileToDelete = args.join(' ');
           await remove(fileToDelete, cwd);
         } else {
-          process.stdout.write(`Specify a valid path for the file to delete after "rm".\n`);
+          process.stdout.write(`${os.EOL}Specify a valid path for the file to delete after "rm".${os.EOL}`);
           commandClosingMsg(cwd);
         };
         break;
@@ -179,13 +180,13 @@ function fileManager() {
               break;
             };
             default: {
-              process.stdout.write(`No such command ${arg}. Type "help" to see available commands.\n`);
+              process.stdout.write(`${os.EOL}No such command ${arg}. Type "help" to see available commands.${os.EOL}`);
               commandClosingMsg(cwd);
               break;
             };
           }
         } else {
-          process.stdout.write(`Specify a valid command after "os". Type "help" to see available commands.\n`);
+          process.stdout.write(`${os.EOL}Specify a valid command after "os". Type "help" to see available commands.${os.EOL}`);
           commandClosingMsg(cwd);
         }
         break;
@@ -195,7 +196,7 @@ function fileManager() {
           const userPath = args.join(' ');
           await calculateHash(userPath, cwd);
         } else {
-          process.stdout.write(`Specify a valid path for the file.\n`);
+          process.stdout.write(`${os.EOL}Specify a valid path for the file.${os.EOL}`);
           commandClosingMsg(cwd);
         }
         break;
@@ -206,7 +207,7 @@ function fileManager() {
           const compressedFileName = args[args.length - 1];
           await compress(fileToCompress, compressedFileName, cwd);
         } else {
-          process.stdout.write(`Specify valid paths for the original and compressed files!\n`);
+          process.stdout.write(`${os.EOL}Specify valid paths for the original and compressed files!${os.EOL}`);
           commandClosingMsg(cwd);
         }
         break;
@@ -217,19 +218,23 @@ function fileManager() {
           const decompressedFileName = args[args.length - 1];
           await decompress(fileToDecompress, decompressedFileName, cwd);
         } else {
-          process.stdout.write(`Specify valid paths for the compressed and decompressed files!\r\n`);
+          process.stdout.write(`${os.EOL}Specify valid paths for the compressed and decompressed files!${os.EOL}`);
           commandClosingMsg(cwd);
         }
         break;
       }
       default: {
-        process.stdout.write(`Invalid input! Type "help" to see available commands.\n`);
+        process.stdout.write(`${os.EOL}Invalid input! Type "help" to see available commands.${os.EOL}`);
         commandClosingMsg(cwd);
         break;
       };
     };  
-  }).on('close', () => {console.log(`Thank you for using File Manager, ${userName}!`)});
+  }).on('close', () => {console.log(`${os.EOL}Thank you for using File Manager, ${userName}!`)});
 
 };
 
 fileManager();
+
+// console.log(JSON.stringify(EOL));
+// await pipeline или pipe с promisify(finished), то сможешь ловить ошибки в catch
+// или используй readablestream.on('error', handlerError)

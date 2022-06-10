@@ -5,13 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "test",
-    "start": "node index.js",
-    "delete": "node src/fs/delete.js",
-    "rename": "node src/fs/rename.js",
-    "args": "node src/cli/parseStartArgs.js -- --username=Maria",
-    "env": "user_name=Maria node src/cli/env.js",
-    "calcHash": "node src/utils/calcHash.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

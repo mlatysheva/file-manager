@@ -15,7 +15,7 @@ export const help = () => {
   helpData.add = new Command("add file_name", "Create a new file in the current directory");
   helpData.rm = new Command("rm file_name", "Delete the file from the current directory");
   helpData.rn = new Command("rn file_name new_name", "Rename the file");
-  helpData.cp = new Command("cp file_path new_file_path", "Copy the file");
+  helpData.cp = new Command("cp file_path new_destination", "Copy the file");
   helpData.mv = new Command("mv file_path new_file_path", "Move the file to another directory");
   helpData.os_EOL = new Command("os --EOL", "Show OS info: default end of line");
   helpData.os_cpus = new Command("os --cpus", "Show OS info: host machine CPUs");
