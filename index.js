@@ -17,6 +17,7 @@ import { rename } from './src/fs/renameFile.js';
 import { copy } from './src/fs/copyFile.js';
 import { move } from './src/fs/moveFile.js';
 import { remove } from './src/fs/deleteFile.js';
+import { extractPaths } from './src/utils/extractPaths.js';
 import { commandClosingMsg } from './src/utils/commandClosingMsg.js';
 
 function fileManager() {
@@ -56,14 +57,14 @@ function fileManager() {
           const doesExistPath = await doesExist(cwd);
           if (doesExistPath) {
             process.chdir(cwd);
-            commandClosingMsg(cwd);
+            commandClosingMsg(path.cwd());
           } else {
             process.stdout.write(`${os.EOL}No such directory ${cwd} exists.${os.EOL}`);
-            commandClosingMsg(cwd);
+            commandClosingMsg(path.cwd());
           }
         } else {
           process.stdout.write(`${os.EOL}Specify a valid directory after "cd".${os.EOL}`);
-          commandClosingMsg(cwd);
+          commandClosingMsg(path.cwd());
         }
         break;
       };
@@ -73,7 +74,7 @@ function fileManager() {
         } else {
           cwd = path.join(cwd, '..');
           process.chdir(cwd);
-          commandClosingMsg(cwd);
+          commandClosingMsg(path.cwd());
         }
         break;
       };
@@ -88,7 +89,7 @@ function fileManager() {
           await read(userPath, cwd);
         } else {
           process.stdout.write(`${os.EOL}Specify a valid path after "cat".${os.EOL}`);
-          commandClosingMsg(cwd);
+          commandClosingMsg(path.cwd());
         };
         break;
       };
@@ -98,42 +99,45 @@ function fileManager() {
           await create(userPath, cwd);
         } else {
           process.stdout.write(`${os.EOL}Specify a valid path to the file after "add".${os.EOL}`);
-          commandClosingMsg(cwd);
+          commandClosingMsg(path.cwd());
         };
         break;
       };
       case "rn": {
         if (args.length > 1) {
-          const fileToRename = args.slice(0, -1).join(' ');
-          const newName = args[args.length - 1];
+          // const fileToRename = args.slice(0, -1).join(' ');
+          // const newName = args[args.length - 1];
+          const [fileToRename, newName] = extractPaths(args.join(' '));
           await rename(fileToRename, newName, cwd);
         } else {
           process.stdout.write(`${os.EOL}Specify valid current file name and new file name after "rn".${os.EOL}`);
-          commandClosingMsg(cwd);
+          commandClosingMsg(path.cwd());
         };
         break;
       };
       case "cp": {
         if (args.length > 1) {
-          const fileToCopy = args.slice(0, -1).join(' ');
-          const newDestination = args[args.length - 1];
+          const [fileToCopy, newDestination] = extractPaths(args.join(' '));
+          // const fileToCopy = args.slice(0, -1).join(' ');
+          // const newDestination = args[args.length - 1];
           console.log(`fileToCopy: ${fileToCopy}`);
           console.log(`newDestination: ${newDestination}`);
           await copy(fileToCopy, newDestination, cwd);
         } else {
           process.stdout.write(`${os.EOL}Specify valid current file path and a new file path after "cp".${os.EOL}`);
-          commandClosingMsg(cwd);
+          commandClosingMsg(path.cwd());
         };
         break;
       };
       case "mv": {
         if (args.length > 1) {
-          const fileToMove = args.slice(0, -1).join(' ');
-          const newDestination = args[args.length - 1];
+          // const fileToMove = args.slice(0, -1).join(' ');
+          // const newDestination = args[args.length - 1];
+          const [fileToMove, newDestination] = extractPaths(args.join(' '));
           await move(fileToMove, newDestination, cwd);
         } else {
           process.stdout.write(`${os.EOL}Specify a valid path for the file to move and new destination path after "mv".${os.EOL}`);
-          commandClosingMsg(cwd);
+          commandClosingMsg(path.cwd());
         };
         break;
       };
@@ -143,7 +147,7 @@ function fileManager() {
           await remove(fileToDelete, cwd);
         } else {
           process.stdout.write(`${os.EOL}Specify a valid path for the file to delete after "rm".${os.EOL}`);
-          commandClosingMsg(cwd);
+          commandClosingMsg(path.cwd());
         };
         break;
       };
@@ -153,12 +157,12 @@ function fileManager() {
           switch (arg) {
             case "homedir": {
               process.stdout.write(`${os.homedir()}\n`);
-              commandClosingMsg(cwd);
+              commandClosingMsg(path.cwd());
               break;
             };
             case "architecture": {
               process.stdout.write(`${os.arch()}\n`);
-              commandClosingMsg(cwd);
+              commandClosingMsg(path.cwd());
               break;
             };
             case "cpus": {
@@ -166,28 +170,28 @@ function fileManager() {
               cpuCores.map((item, i) => {
                 console.dir(item);
               });
-              commandClosingMsg(cwd);
+              commandClosingMsg(path.cwd());
               break;
             };
             case "EOL": {
               console.log(JSON.stringify(os.EOL));
-              commandClosingMsg(cwd);
+              commandClosingMsg(path.cwd());
               break;
             };
             case "username": {
               console.log(os.userInfo().username);
-              commandClosingMsg(cwd);
+              commandClosingMsg(path.cwd());
               break;
             };
             default: {
               process.stdout.write(`${os.EOL}No such command ${arg}. Type "help" to see available commands.${os.EOL}`);
-              commandClosingMsg(cwd);
+              commandClosingMsg(path.cwd());
               break;
             };
           }
         } else {
           process.stdout.write(`${os.EOL}Specify a valid command after "os". Type "help" to see available commands.${os.EOL}`);
-          commandClosingMsg(cwd);
+          commandClosingMsg(path.cwd());
         }
         break;
       }
@@ -197,7 +201,7 @@ function fileManager() {
           await calculateHash(userPath, cwd);
         } else {
           process.stdout.write(`${os.EOL}Specify a valid path for the file.${os.EOL}`);
-          commandClosingMsg(cwd);
+          commandClosingMsg(path.cwd());
         }
         break;
       }
@@ -208,7 +212,7 @@ function fileManager() {
           await compress(fileToCompress, compressedFileName, cwd);
         } else {
           process.stdout.write(`${os.EOL}Specify valid paths for the original and compressed files!${os.EOL}`);
-          commandClosingMsg(cwd);
+          commandClosingMsg(path.cwd());
         }
         break;
       }
@@ -219,13 +223,13 @@ function fileManager() {
           await decompress(fileToDecompress, decompressedFileName, cwd);
         } else {
           process.stdout.write(`${os.EOL}Specify valid paths for the compressed and decompressed files!${os.EOL}`);
-          commandClosingMsg(cwd);
+          commandClosingMsg(path.cwd());
         }
         break;
       }
       default: {
         process.stdout.write(`${os.EOL}Invalid input! Type "help" to see available commands.${os.EOL}`);
-        commandClosingMsg(cwd);
+        commandClosingMsg(path.cwd());
         break;
       };
     };  

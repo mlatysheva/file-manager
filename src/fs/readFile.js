@@ -15,14 +15,14 @@ export const read = async (filePath, cwd) => {
       })
       readableStream.on('end', () => {
         process.stdout.write('\n');
-        commandClosingMsg(cwd);
+        commandClosingMsg(path.cwd());
       });
     } catch (error) {
       console.log(`\r\nOperation failed!\n${error}`);
-      commandClosingMsg(cwd);
+      commandClosingMsg(path.cwd());
     }
   } else {
     process.stdout.write(`\r\nSuch file ${filePath} does not exist.\n`);
-    commandClosingMsg(cwd);
+    commandClosingMsg(path.cwd());
   }
 };

@@ -1,22 +1,36 @@
-import * as fs from 'fs/promises';
+import { rm, createReadStream, createWriteStream } from 'fs';
 import { doesExist } from '../utils/doesExist.js';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { commandClosingMsg } from '../utils/commandClosingMsg.js';
 
 export const move = async (fileToMove, newDestination, cwd) => {
   try {
+    const filename = fileToMove.replace(/^.*[\\\/]/, '');
     const absolutePath = getAbsolutePath(fileToMove, cwd);
-    const doesExistPath = await doesExist(absolutePath);
-    if (doesExistPath) {
-      await fs.copyFile(absolutePath, getAbsolutePath(newDestination, cwd));
-      await fs.rm(absolutePath);
-      process.stdout.write(`\nFile ${fileToMove} was successfully moved to ${newDestination}\n`);
-      commandClosingMsg(cwd);
+    let newAbsolutePath = getAbsolutePath(newDestination, cwd);
+    const doesNewAbsolutePathExist = await doesExist(newAbsolutePath);
+    if (!newAbsolutePath.includes('.')) {
+      newAbsolutePath += `/${filename}`;
+    }
+    const doesAbsolutePathExist = await doesExist(absolutePath);
+    if (doesAbsolutePathExist && doesNewAbsolutePathExist) {
+      const readable = createReadStream(absolutePath);
+      const writable = createWriteStream(newAbsolutePath);
+      readable.pipe(writable);
+      rm(absolutePath, (error) => {
+        if (error) {
+          console.error(`\r\nOperation failed!\n${error}`);
+        }
+      });
+      process.stdout.write(`\r\nFile ${fileToMove} was successfully moved to ${newDestination}\r\n`);
+      commandClosingMsg(path.cwd());
     } else {
-      process.stdout.write(`\nNo such file ${fileToMove} exists!`);
-      commandClosingMsg(cwd);
+      process.stdout.write(`\r\nEnter valid paths for ${fileToMove} and ${newDestination}!\r\n`);
+      commandClosingMsg(path.cwd());
     }
   } catch (err) {
-    console.error(`FS operation failed! Make sure to include the name of the file in the destination path!\n${err}`);
+    console.error(`FS operation failed! ${err}`);
   }
 };
+
+// { encoding: 'utf8', highWaterMark: 16 * 1024 }
