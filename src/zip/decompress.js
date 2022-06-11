@@ -8,7 +8,7 @@ import { doesExist } from '../utils/doesExist.js';
 export const decompress = async (path_to_file, path_to_destination, cwd) => {
   try {
     if (path_to_file.slice(-3) !== '.br') {
-      console.log(`\n${path_to_file} is not a valid compressed file. Specify a file with a valid extention ".br"`);
+      console.log(`${path_to_file} is not a valid compressed file. Specify a file with a valid extention ".br"`);
       commandClosingMsg(cwd);
     } else {
       const absolutePath = getAbsolutePath(path_to_file, cwd);
@@ -35,6 +35,6 @@ export const decompress = async (path_to_file, path_to_destination, cwd) => {
       }
     }
   } catch (err) {
-    console.log(`${EOL}Operation failed.${EOL}${err}`);
+    console.log(`Operation failed.${EOL}${err}`);
   }
 };

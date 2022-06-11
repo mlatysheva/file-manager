@@ -200,9 +200,6 @@ function fileManager() {
       case "compress": {
         if (args.length > 0) {
           const [fileToCompress, compressedFileName] = extractPaths(args.join(' '));
-          console.log(`Compressing ${fileToCompress} to ${compressedFileName}`);
-          // const fileToCompress = args.slice(0, -1).join(' ');
-          // const compressedFileName = args[args.length - 1];
           await compress(fileToCompress, compressedFileName, cwd);
         } else {
           process.stdout.write(`${os.EOL}Specify valid paths for the original and compressed files!${os.EOL}`);
@@ -212,8 +209,6 @@ function fileManager() {
       }
       case "decompress": {
         if (args.length > 0) {
-          // const fileToDecompress = args.slice(0, -1).join(' ');
-          // const decompressedFileName = args[args.length - 1];
           const [fileToDecompress, decompressedFileName] = extractPaths(args.join(' '), 'decompress');
           await decompress(fileToDecompress, decompressedFileName, cwd);
         } else {
@@ -233,7 +228,3 @@ function fileManager() {
 };
 
 fileManager();
-
-// console.log(JSON.stringify(EOL));
-// await pipeline или pipe с promisify(finished), то сможешь ловить ошибки в catch
-// или используй readablestream.on('error', handlerError)

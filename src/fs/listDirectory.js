@@ -1,6 +1,7 @@
 // import fs from 'fs';
 import * as fs from 'fs/promises';
 import path from 'path';
+import { EOL } from 'os';
 import { commandClosingMsg } from '../utils/commandClosingMsg.js';
 import { doesExist } from '../utils/doesExist.js';
 
@@ -17,7 +18,7 @@ export const listDirectory = async (pathToDirectory) => {
     
           await fs.stat(fileName, (err, stats) => {
             if (err) {
-              console.log(`FS operation failed!\n${err}`);
+              console.log(`Operation failed!${EOL}${err}`);
               return;
             }
             if (stats.isFile()) {
@@ -35,7 +36,7 @@ export const listDirectory = async (pathToDirectory) => {
       commandClosingMsg(path.cwd());
     }
   } catch (error) {
-    console.log(`FS operation failed!\n${error}`);
+    console.log(`Operation failed!${EOL}${error}`);
   }
 };
 
@@ -49,21 +50,24 @@ export const list = async (pathToDirectory) => {
       let fileArray = [];
       fs.readdir(pathToDirectory)
       .then(files => {
-        // for (let filename of filenames) {
-        //   console.log(filename);
-        // }
-        files.forEach(async (file, index) => {
-          let fileName = path.join(pathToDirectory, file);
+        for (let file of files) {
           console.log(file);
-          fileArray.push(fileName);
-          const stats = await fs.stat(fileName);
-          if (stats.isFile()) {
-            const item = {"name": path.basename(file, path.extname(fileName)) + path.extname(fileName), "type": 'file', "size": stats.size};
-            console.dir(item);
-          } else {
-            const item = {"name": file, "type": 'directory', "size": 0};
-            console.dir(item);
-          }
+        }
+
+
+        // files.forEach(async (file, index) => {
+        //   let fileName = path.join(pathToDirectory, file);
+        //   console.log(file);
+        //   fileArray.push(fileName);
+        //   const stats = await fs.stat(fileName);
+        //   if (stats.isFile()) {
+        //     const item = {"name": path.basename(file, path.extname(fileName)) + path.extname(fileName), "type": 'file', "size": stats.size};
+        //     console.dir(item);
+        //   } else {
+        //     const item = {"name": file, "type": 'directory', "size": 0};
+        //     console.dir(item);
+        //   }
+        // });
     
           // await fs.stat(fileName, (err, stats) => {
           //   if (err) {
@@ -78,17 +82,17 @@ export const list = async (pathToDirectory) => {
           //     console.dir(item);
           //   }
           // });        
-        });
+        
         // commandClosingMsg(pathToDirectory);
       }).then(() => {commandClosingMsg(pathToDirectory)})
       .catch(err => {
-        console.log(`\nOperation failed!\n${err}`);
+        console.log(`Operation failed!${EOL}${err}`);
       })
     } else {
-      process.stdout.write(`No such directory ${pathToDirectory} exists.\n`);
+      process.stdout.write(`${EOL}No such directory ${pathToDirectory} exists.${EOL}`);
       commandClosingMsg(path.cwd());
     }
   } catch (error) {
-    console.log(`FS operation failed!\n${error}`);
+    console.log(`Operation failed!${EOL}${error}`);
   }
 };

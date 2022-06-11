@@ -3,7 +3,7 @@ export function extractPaths(pathString, category='') {
   let helpArray = pathString.split('.');
   let sections = helpArray.length;
   if (sections < 2) {
-    console.log('\nSpecify valid paths!');
+    console.log('Specify valid paths!');
     return;
   }
   let firstPath = '';

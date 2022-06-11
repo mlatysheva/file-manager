@@ -34,5 +34,3 @@ export const move = async (fileToMove, newDestination, cwd) => {
     commandClosingMsg(cwd);
   }
 };
-
-// { encoding: 'utf8', highWaterMark: 16 * 1024 }

@@ -1,4 +1,5 @@
 import * as fs from 'fs/promises';
+import { EOL } from 'os';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
 import { commandClosingMsg } from '../utils/commandClosingMsg.js';
 
@@ -6,9 +7,9 @@ export const create = async (userPath, cwd) => {
   const absolutePath = getAbsolutePath(userPath, cwd);
   try {
     await fs.writeFile(absolutePath, '');
-    console.log(`\nFile ${userPath} was successfully created.`);
+    console.log(`${EOL}File ${userPath} was successfully created.${EOL}`);
   } catch (err) {
-    console.log(`FS operation failed!\n${err}`);
+    console.log(`${EOL}Operation failed!${EOL}${err}${EOL}`);
   }
   commandClosingMsg(cwd);
 }
