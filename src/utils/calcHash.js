@@ -16,8 +16,12 @@ export const calculateHash = async (filePath, cwd) => {
         hash = createHash('sha256').update(data).digest('hex');        
       });
       stream.on('end', () => {
-        process.stdout.write(`${EOL}Hash for the file: ${filePath} is: ${hash}${EOL}`);
-        commandClosingMsg(cwd);
+        if (hash === '') {
+          console.log(`The file ${filePath} is empty. No hash was calculated.`);
+        } else {
+          process.stdout.write(`${EOL}Hash for the file: ${filePath} is: ${hash}${EOL}`);
+          commandClosingMsg(cwd);
+        }
         return hash;
       });
     } else {

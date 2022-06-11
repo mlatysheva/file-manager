@@ -7,9 +7,9 @@ export const create = async (userPath, cwd) => {
   const absolutePath = getAbsolutePath(userPath, cwd);
   try {
     await fs.writeFile(absolutePath, '');
-    console.log(`${EOL}File ${userPath} was successfully created.${EOL}`);
+    console.log(`File ${userPath} was successfully created.`);
   } catch (err) {
-    console.log(`${EOL}Operation failed!${EOL}${err}${EOL}`);
+    console.log(`Operation failed!${EOL}${err}`);
   }
   commandClosingMsg(cwd);
 }

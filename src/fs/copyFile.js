@@ -9,8 +9,9 @@ export const copy = async (fileToCopy, newDestination, cwd) => {
     const filename = fileToCopy.replace(/^.*[\\\/]/, '');
     const absolutePath = getAbsolutePath(fileToCopy, cwd);
     let newAbsolutePath = getAbsolutePath(newDestination, cwd);
-    const doesNewAbsolutePathExist = await doesExist(newAbsolutePath);
+    let doesNewAbsolutePathExist = true;
     if (!newAbsolutePath.includes('.')) {
+      await doesExist(newAbsolutePath);
       newAbsolutePath += `/${filename}`;
     }
     const doesAbsolutePathExist = await doesExist(absolutePath);
