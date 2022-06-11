@@ -11,9 +11,10 @@ export const compress = async (path_to_file, path_to_destination, cwd) => {
     const filename = path_to_file.replace(/^.*[\\\/]/, '');
     let newAbsolutePath = getAbsolutePath(path_to_destination, cwd);
     const doesAbsolutePathExist = await doesExist(absolutePath);
-    const doesNewAbsolutePathExist = await doesExist(newAbsolutePath);
+    let doesNewAbsolutePathExist = true;
     if (!newAbsolutePath.includes('.')) {
-      newAbsolutePath += `/${filename}.br`;
+      doesNewAbsolutePathExist = await doesExist(newAbsolutePath);
+      newAbsolutePath += `/${filename}.br`;      
     }
     if (doesAbsolutePathExist && doesNewAbsolutePathExist) {   
       const fileToCompress = createReadStream(absolutePath);
@@ -25,7 +26,7 @@ export const compress = async (path_to_file, path_to_destination, cwd) => {
       process.stdout.write(`${EOL}File ${path_to_file} was successfully compressed to ${newAbsolutePath}.${EOL}`);
       commandClosingMsg(cwd);
     } else {
-      process.stdout.write(`No such file or directory ${path_to_file} or ${path_to_destination} exists.\n`);
+      process.stdout.write(`${EOL}Specify valid paths for ${path_to_file} and ${path_to_destination}.${EOL}`);
       commandClosingMsg(cwd);
     }
   } catch (err) {
