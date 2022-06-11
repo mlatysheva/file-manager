@@ -1,4 +1,5 @@
 import { EOL } from 'os';
+import path from 'path';
 import { createReadStream, createWriteStream } from 'fs';
 import zlib from 'zlib';
 import { getAbsolutePath } from '../utils/getAbsolutePath.js';
@@ -15,6 +16,9 @@ export const compress = async (path_to_file, path_to_destination, cwd) => {
     if (!newAbsolutePath.includes('.')) {
       doesNewAbsolutePathExist = await doesExist(newAbsolutePath);
       newAbsolutePath += `/${filename}.br`;      
+    } else {
+      const newAbsolutePathDirname = path.dirname(newAbsolutePath);
+      doesNewAbsolutePathExist = await doesExist(newAbsolutePathDirname);
     }
     if (doesAbsolutePathExist && doesNewAbsolutePathExist) {   
       const fileToCompress = createReadStream(absolutePath);
@@ -30,6 +34,6 @@ export const compress = async (path_to_file, path_to_destination, cwd) => {
       commandClosingMsg(cwd);
     }
   } catch (err) {
-    console.log(`FS operation failed!${EOL}${err}`);
+    console.log(`Operation failed! ${err}`);
   }
 };

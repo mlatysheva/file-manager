@@ -31,7 +31,7 @@ export const move = async (fileToMove, newDestination, cwd) => {
       commandClosingMsg(cwd);
     }
   } catch (err) {
-    console.error(`FS operation failed! ${err}`);
+    console.error(`Omv peration failed! ${err}`);
     commandClosingMsg(cwd);
   }
 };

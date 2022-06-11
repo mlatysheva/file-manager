@@ -159,6 +159,7 @@ function fileManager() {
             };
             case "cpus": {
               const cpuCores = os.cpus();
+              console.log('Total CPU cores: ', cpuCores.length);
               cpuCores.map((item, i) => {
                 console.dir(item);
               });
