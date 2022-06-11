@@ -7,6 +7,8 @@ import { commandClosingMsg } from '../utils/commandClosingMsg.js';
 
 export const compress = async (path_to_file, path_to_destination, cwd) => {
   try {
+    console.log(`path_to_file: ${path_to_file}`);
+    console.log(`path_to_destination: ${path_to_destination}`);
     const absolutePath = getAbsolutePath(path_to_file, cwd);
     const filename = path_to_file.replace(/^.*[\\\/]/, '');
     let newAbsolutePath = getAbsolutePath(path_to_destination, cwd);
@@ -21,11 +23,13 @@ export const compress = async (path_to_file, path_to_destination, cwd) => {
       const brotli = zlib.createBrotliCompress();
 
       fileToCompress.pipe(brotli).pipe(writableStream);
+      console.log(`absolutePath: ${absolutePath}`);
+      console.log('newAbsolutePath: ' + newAbsolutePath);
 
       process.stdout.write(`${EOL}File ${path_to_file} was successfully compressed to ${newAbsolutePath}.${EOL}`);
       commandClosingMsg(cwd);
     } else {
-      process.stdout.write(`No such file or directory ${path_to_file} exists.\n`);
+      process.stdout.write(`No such file or directory ${path_to_file} or ${path_to_destination} exists.\n`);
       commandClosingMsg(cwd);
     }
   } catch (err) {
